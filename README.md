@@ -34,7 +34,7 @@ mvn package -Pwar -Dmaven.test.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.
 ```
 ./scripts/upload.sh \
   -b bucket \
-  -w ../../app/target/FunfactApplication.war \
+  -w ./app/target/FunfactApplication.war \
   -v 1.1.0 \
   -n funfact.war
 ```
@@ -53,7 +53,7 @@ The script should spit out the public DNS. Validate app comes up correctly with 
 ### Upgrade the app
 1. Update `terraform.tfvars` blue/green archive values as needed.
 
-2. Apply terraform scripts for gradual roll-out
+2. Apply terraform scripts for gradual roll-out (pipeline-steps)
 ```
 cd terraform
 terraform init -backend-config=./backend.tfvars
@@ -65,9 +65,12 @@ terraform apply tfplan
 terraform plan -var "traffic_distribution=split" -out tfplan
 terraform apply tfplan
 
-# Validate that 100% traffic is going to the new app
+# Validate that 50% traffic is going to the new app
+
 terraform plan -var "traffic_distribution=green" -out tfplan
 terraform apply tfplan
+
+# Validate that 100% traffic is going to the new app
 ```
 
 3. Flip the blue/green variable values in the next upgrade cycle
