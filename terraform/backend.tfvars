@@ -1,3 +1,3 @@
-bucket = "bb-tf"
-key    = "faheem/test/terraform.tfstate"
-region = "us-east-2"
+bucket = "tf-bucket"
+key    = "tomcat/scenario1/terraform.tfstate"
+region = "us-east-1"
