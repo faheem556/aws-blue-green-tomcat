@@ -1,0 +1,11 @@
+FROM maven:3.6.3-openjdk-15-slim AS build
+WORKDIR /usr/src/app
+COPY pom.xml ./
+RUN /usr/local/bin/mvn-entrypoint.sh \
+    mvn install -Pwar -Dmaven.test.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true --fail-never
+COPY . .
+RUN mvn package -Pwar -Dmaven.test.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true
+
+FROM tomcat:jdk15-openjdk-slim
+WORKDIR /usr/local/tomcat/webapps
+COPY --from=build /usr/src/app/target/*.war ./ROOT.war

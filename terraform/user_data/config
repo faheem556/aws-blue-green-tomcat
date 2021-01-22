@@ -1,0 +1,63 @@
+#!/bin/bash 
+
+# Install Java
+export DEBIAN_FRONTEND=noninteractive
+sudo apt update
+sudo apt install -y openjdk-11-jdk unzip
+
+# Setup tomcat user/gropu
+sudo groupadd tomcat
+sudo useradd -m -d /opt/tomcat -g tomcat -s /bin/false tomcat
+
+# Download and install binary
+cd /tmp
+VERSION=${tomcat_version}
+wget https://www-eu.apache.org/dist/tomcat/tomcat-9/v$${VERSION}/bin/apache-tomcat-$${VERSION}.tar.gz -P /tmp
+sudo tar -xf /tmp/apache-tomcat-$${VERSION}.tar.gz -C /opt/tomcat/
+sudo ln -s /opt/tomcat/apache-tomcat-$${VERSION} /opt/tomcat/latest
+sudo chown -R tomcat:tomcat /opt/tomcat
+sudo sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
+
+# Setup service
+sudo cat<<EOF > /etc/systemd/system/tomcat.service
+[Unit]
+Description=Tomcat 9 servlet container
+After=network.target
+
+[Service]
+Type=forking
+
+User=tomcat
+Group=tomcat
+
+Environment="JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64"
+Environment="JAVA_OPTS=-Djava.security.egd=file:///dev/urandom -Djava.awt.headless=true"
+
+Environment="CATALINA_BASE=/opt/tomcat/latest"
+Environment="CATALINA_HOME=/opt/tomcat/latest"
+Environment="CATALINA_PID=/opt/tomcat/latest/temp/tomcat.pid"
+Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+
+ExecStart=/opt/tomcat/latest/bin/startup.sh
+ExecStop=/opt/tomcat/latest/bin/shutdown.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now tomcat
+sudo systemctl status tomcat
+
+# Allow port
+sudo ufw allow 8080/tcp
+
+# Install AWS CLI
+pushd /tmp
+wget "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+unzip awscli-exe-linux-x86_64.zip
+sudo ./aws/install
+popd
+
+# Install the app
+sudo aws s3 cp "${app_s3_archive}" /opt/tomcat/latest/webapps/ROOT.war
