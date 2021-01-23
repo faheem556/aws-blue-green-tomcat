@@ -17,8 +17,8 @@ docker build -t funfact:java-war-1.0 -f Dockerfile.tomcat .
 docker run -d -p 8080:8080 funfact:java-war-1.0
 
 # Test runnging app
-open localhost:8080
-curl localhost:8080/health
+open http://localhost:8080
+curl http://localhost:8080/health
 ```
 
 ### Build
@@ -39,7 +39,7 @@ mvn package -Pwar -Dmaven.test.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.
   -n funfact.war
 ```
 
-### Terraform
+## Terraform
 ### Setup Infra
 ```
 cd terraform
