@@ -26,7 +26,7 @@ provider "aws" {
   region = var.infra_region
 
   assume_role {
-    role_arn     = "arn:aws:iam::564087180491:role/terraform"
+    role_arn     = "arn:aws:iam::role_id:role/terraform"
     session_name = "faheem.memon"
   }
 }
