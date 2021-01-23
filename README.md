@@ -1,11 +1,12 @@
 # Scenario: Update Java application (WAR) on Tomcat servers with zero downtime on AWS
 Solution Highlights:
-1. Upload the archive to s3 bucket and download using instance profile and cloud-config
-2. Zero-downtime through canary/BG style deployment using terraform
-3. Availability health checks for application availabity before any 
-4. Switch between deployment using target groups
-5. Blue/green launch configs and auto-scalling groups associated with the target group
-
+1. A sample Java WAR application with `/health` endpoint
+2. A bash script to upload java web archives to S3 bucket
+3. Terraform script to deploy and upgrade the application on VMs in AWS
+4. Zero-downtime upgrades using weighted forwarding in target groups
+5. Application health check validation for readiness and liveliness 
+6. Blue/green launch configs and auto-scalling groups to demonstrate immutable infra
+7. Automated ASG scaling based on canary/BG deployment style
 
 ## Sample App
 ### Run Locally
