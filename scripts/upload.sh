@@ -66,4 +66,4 @@ aws s3api put-object \
   --tagging "version=$VERSION" \
   --body $WAR --output json
 
-info "Uploaded successfull"
+info "Upload successful"
